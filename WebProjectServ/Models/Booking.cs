@@ -10,13 +10,11 @@ public class Booking
 
     [Required]
     public int ClientId { get; set; }
-
     [ValidateNever]
     public Client Client { get; set; }
 
     [Required]
     public int TourId { get; set; }
-
     [ValidateNever]
     public Tour Tour { get; set; }
 

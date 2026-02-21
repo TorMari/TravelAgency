@@ -9,7 +9,6 @@ namespace WebProjectServ.Models
         { 
             Database.EnsureCreated();
         }
-
         public DbSet<Client> Clients { get; set; }
         public DbSet<Tour> Tours { get; set; }
         public DbSet<Booking> Bookings { get; set; }

@@ -15,7 +15,6 @@
         public DateOnly DateOfBirth { get; set; }
 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
         public string FullName => $"{FirstName} {LastName}";
     }
 }

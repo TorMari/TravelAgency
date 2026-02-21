@@ -8,7 +8,6 @@ namespace WebProjectServ.Controllers
     public class ClientsController : Controller
     {
         private readonly MyDataContext _context;
-
         public ClientsController(MyDataContext context)
         {
             _context = context;
@@ -128,7 +127,6 @@ namespace WebProjectServ.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool ClientExists(int id)
         {
             return _context.Clients.Any(e => e.Id == id);

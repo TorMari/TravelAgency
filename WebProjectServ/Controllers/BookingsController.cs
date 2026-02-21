@@ -56,7 +56,6 @@ namespace WebProjectServ.Controllers
                 "Display",
                 clientId
             );
-
             ViewData["TourId"] = new SelectList(
                 _context.Tours
                     .Select(t => new
@@ -277,7 +276,6 @@ namespace WebProjectServ.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         private bool BookingExists(int id)
         {
             return _context.Bookings.Any(e => e.Id == id);

@@ -128,7 +128,6 @@ namespace WebProjectServ.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool ClientExists(int id)
         {
             return _context.Tours.Any(e => e.Id == id);
