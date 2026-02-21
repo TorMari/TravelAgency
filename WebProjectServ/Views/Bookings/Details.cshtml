@@ -1,0 +1,160 @@
+﻿@model WebProjectServ.Models.Booking
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Booking №@Model.Id</h2>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-secondary fw-semibold text-white">
+                    Booking Information
+                </div>
+                <div class="card-body">
+
+                    <p>
+                        <strong>ID:</strong>
+                        @Model.Id
+                    </p>
+
+                    <p>
+                        <strong>Booking Date:</strong><br />
+                        @Model.BookingDate
+                    </p>
+
+                    <p>
+                        <strong>Number of People:</strong><br />
+                        @Model.NumberOfPeople
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong><br />
+                        @{
+                            var statusClass = Model.Status switch
+                            {
+                                "Confirmed" => "bg-success",
+                                "Pending" => "bg-warning text-dark",
+                                "Cancelled" => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                        }
+                        <span class="badge @statusClass">
+                            @Model.Status
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Total Price, €:</strong><br />
+                        @Model.TotalPrice
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-secondary fw-semibold text-white">
+                    Client Information
+                </div>
+                <div class="card-body">
+
+                    <p>
+                        <strong>Client ID:</strong>
+                        @Model.ClientId
+                    </p>
+
+                    <p>
+                        <strong>Last Name:</strong><br />
+                        @Model.Client?.LastName
+                    </p>
+
+                    <p>
+                        <strong>First Name:</strong><br />
+                        @Model.Client?.FirstName 
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong><br />
+                        @Model.Client?.Email
+                    </p>
+
+                    <p>
+                        <strong>Phone number:</strong><br />
+                        @Model.Client?.Phone
+                    </p>
+
+                    <a asp-controller="Clients"
+                       asp-action="Details"
+                       asp-route-id="@Model.ClientId"
+                       class="btn btn-sm btn-outline-info mt-2">
+                        Client Details
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-secondary fw-semibold text-white">
+                    Tour Information
+                </div>
+                <div class="card-body">
+
+                    <p>
+                        <strong>Tour ID:</strong>
+                        @Model.TourId
+                    </p>
+
+                    <p>
+                        <strong>Name:</strong><br />
+                        @Model.Tour?.Name
+                    </p>
+
+                    <p>
+                        <strong>Country:</strong><br />
+                        @Model.Tour?.Country
+                    </p>
+
+                    <p>
+                        <strong>Price, €:</strong><br />
+                        <span>
+                            @Model.Tour?.Price
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Duration:</strong><br />
+                        @Model.Tour?.DurationDays days
+                    </p>
+
+                    <a asp-controller="Tours"
+                       asp-action="Details"
+                       asp-route-id="@Model.TourId"
+                       class="btn btn-sm btn-outline-info mt-2">
+                        Tour Details
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <a asp-action="Index" class="btn btn-secondary">
+                ← Back to list
+            </a>
+
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                Edit
+            </a>
+            
+        </div>
+
+    </div>
+</div>

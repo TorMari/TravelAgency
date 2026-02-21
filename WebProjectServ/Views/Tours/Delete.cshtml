@@ -1,0 +1,68 @@
+﻿@model WebProjectServ.Models.Tour
+
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-danger">
+
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">
+                Delete Tour №@Model.Id
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+                Are you sure you want to delete this tour and all associated bookings?
+                This action cannot be undone.
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Country</dt>
+                <dd class="col-sm-9">@Model.Country</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3">Number of Days</dt>
+                <dd class="col-sm-9">@Model.DurationDays</dd>
+
+                <dt class="col-sm-3">Start Date</dt>
+                <dd class="col-sm-9">@Model.StartDate</dd>
+
+                <dt class="col-sm-3">Price, €</dt>
+                <dd class="col-sm-9">@Model.Price</dd>
+
+                <dt class="col-sm-3">Number of bookings</dt>
+                <dd class="col-sm-9">
+                    @Model.Bookings.Count
+                </dd>
+            </dl>
+
+        </div>
+
+        <div class="card-footer text-end">
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Cancel
+            </a>
+
+            <form asp-action="Delete" class="d-inline">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">
+                    Delete
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
