@@ -15,7 +15,7 @@
                 
                 <div class="card-body">
                     <form asp-action="Edit">
-                        <input type="hidden" asp-for="Id" />
+                        <input asp-for="Id" type="hidden" asp-for="Id" />
 
                         <div class="mb-3">
                             <label asp-for="ClientId"></label>
@@ -62,4 +62,6 @@
     </div>
 </div>
 
-
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

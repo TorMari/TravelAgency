@@ -1,0 +1,89 @@
+﻿@model WebProjectServ.Models.Booking
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+@* <div asp-validation-summary="All" class="text-danger mb-3"></div> *@
+<div class="container mt-4">
+
+    <div class="card shadow border-warning">
+
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">
+                Adding new information
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+                Are you sure you want to save this booking?
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">Client Id</dt>
+                <dd class="col-sm-9">@Model.ClientId</dd>
+
+                <dt class="col-sm-3">Tour Id</dt>
+                <dd class="col-sm-9">@Model.TourId</dd>
+
+                <dt class="col-sm-3">Number of People</dt>
+                <dd class="col-sm-9">@Model.NumberOfPeople</dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    @{
+                        var statusClass = @Model.Status switch
+                        {
+                            "Confirmed" => "bg-success",
+                            "Pending" => "bg-warning text-dark",
+                            "Cancelled" => "bg-danger",
+                            _ => "bg-secondary"
+                        };
+                    }
+                    <span class="badge @statusClass">
+                        @Model.Status
+                    </span>
+                </dd>
+            </dl> 
+
+        </div>
+
+        <div class="card-footer text-end">
+            @if (ViewBag.FromClient != null)
+            {
+                <a asp-controller="Clients"
+                   asp-action="Details"
+                   asp-route-id="@ViewBag.FromClient"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            }
+            else if (ViewBag.FromTour != null)
+            {
+                <a asp-controller="Tours"
+                   asp-action="Details"
+                   asp-route-id="@ViewBag.FromTour"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancel
+                </a>
+            }
+            <form asp-action="Confirm" class="d-inline" method="post">
+                <input type="hidden" name="mode" value="@ViewBag.Mode" />
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+

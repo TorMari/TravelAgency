@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using WebProjectServ.Models;
 
 namespace WebProjectServ.Controllers
@@ -45,34 +47,12 @@ namespace WebProjectServ.Controllers
             ViewBag.FromClient = clientId;
             ViewBag.FromTour = tourId;
 
-            ViewData["ClientId"] = new SelectList(
-                _context.Clients
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " " + c.FirstName + " " + c.LastName
-                    }),
-                "Id",
-                "Display",
-                clientId
-            );
-            ViewData["TourId"] = new SelectList(
-                _context.Tours
-                    .Select(t => new
-                    {
-                        t.Id,
-                        Display = t.Id + " - " + t.Name
-                    }),
-                "Id",
-                "Display",
-                tourId
-            );
-
+            PopulateLists(clientId, tourId);
             ViewBag.Order = clientId != null ? "clientFirst" :
                             tourId != null ? "tourFirst" :
                             "default";
 
-            return View();
+            return View(new Booking { ClientId = clientId ?? 0, TourId = tourId ?? 0 });
         }
 
         // POST: Bookings/Create
@@ -81,112 +61,53 @@ namespace WebProjectServ.Controllers
         public async Task<IActionResult> Create(Booking booking, int? fromClient, int? fromTour)
         {
             bool exists = await _context.Bookings
-                .AnyAsync(b => b.ClientId == booking.ClientId
-                            && b.TourId == booking.TourId);
+                .AnyAsync(b => b.ClientId == booking.ClientId && b.TourId == booking.TourId);
 
             if (exists)
-            {
-                ModelState.AddModelError("",
-                    "This client has already booked this tour.");
-            }
+                ModelState.AddModelError("", "This client has already booked this tour.");
+
             if (ModelState.IsValid)
             {
+                var tour = await _context.Tours.FindAsync(booking.TourId);
                 booking.BookingDate = DateTime.Now;
-                booking.TotalPrice = booking.NumberOfPeople *
-                    _context.Tours
-                        .Where(t => t.Id == booking.TourId)
-                        .Select(t => t.Price)
-                        .FirstOrDefault();
+                booking.TotalPrice = booking.NumberOfPeople * (tour?.Price ?? 0);
+
+                HttpContext.Session.SetString("CreateBooking", JsonSerializer.Serialize(booking));
+
+                ViewBag.FromClient = fromClient;
+                ViewBag.FromTour = fromTour;
+                ViewBag.TourName = tour?.Name;
+                ViewBag.Mode = "Create";
+                return View("Confirm", booking);
+            }
+            PopulateLists(booking.ClientId, booking.TourId);
+            HttpContext.Session.Remove("CreateBooking");
+            ViewBag.FromClient = fromClient;
+            ViewBag.FromTour = fromTour;
+            return View(booking);
+
+        }
+
+
+        public async Task<IActionResult> Confirm(string mode, int? fromClient, int? fromTour)
+        {
+            string modename = mode + "Booking";
+            var data = HttpContext.Session.GetString(modename);
+            if (data == null) return RedirectToAction(nameof(Create));
+            var booking = JsonSerializer.Deserialize<Booking>(data);
+
+            if (mode == "Create")
+            {
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
-
-                if (fromClient != null)
-                    return RedirectToAction("Details", "Clients", new { id = fromClient });
-
-                if (fromTour != null)
-                    return RedirectToAction("Details", "Tours", new { id = fromTour });
-
-                return RedirectToAction(nameof(Index));
+                
             }
-
-            ViewData["ClientId"] = new SelectList(
-                _context.Clients
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.FullName
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.ClientId
-            );
-
-            ViewData["TourId"] = new SelectList(
-                _context.Tours
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.Name
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.TourId
-            );
-            return View(booking);
-        }
-
-        // GET: Bookings/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null) return NotFound();
-
-            ViewData["ClientId"] = new SelectList(
-                _context.Clients
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.FullName
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.ClientId
-            );
-
-            ViewData["TourId"] = new SelectList(
-                _context.Tours
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.Name
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.TourId
-            );
-            return View(booking);
-        }
-
-        // POST: Bookings/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ClientId,TourId,Status,NumberOfPeople")] Booking booking)
-        {
-            if (id != booking.Id) return NotFound();
-
-            if (ModelState.IsValid)
+            else if(mode == "Edit")
             {
                 try
                 {
-                    var model = await _context.Bookings.FindAsync(id);
-                    if (model == null)
-                        return NotFound();
+                    var model = await _context.Bookings.FindAsync(booking.Id);
+                    if (model == null) return NotFound();
 
                     model.ClientId = booking.ClientId;
                     model.TourId = booking.TourId;
@@ -201,8 +122,6 @@ namespace WebProjectServ.Controllers
 
 
                     await _context.SaveChangesAsync();
-
-                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
                 {
@@ -216,37 +135,59 @@ namespace WebProjectServ.Controllers
                         ModelState.AddModelError("",
                             "An error occurred while saving. Please try again.");
                     }
+
+                    return View("Confirm", booking); 
                 }
             }
 
-            ViewData["ClientId"] = new SelectList(
-                _context.Clients
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.FullName
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.ClientId
-            );
+            HttpContext.Session.Remove(modename);
+            if (fromClient != null)
+                return RedirectToAction("Details", "Clients", new { id = fromClient });
+            if (fromTour != null)
+                return RedirectToAction("Details", "Tours", new { id = fromTour });
 
-            ViewData["TourId"] = new SelectList(
-                _context.Tours
-                    .Select(c => new
-                    {
-                        c.Id,
-                        Display = c.Id + " - " + c.Name
-                    })
-                    .ToList(),
-                "Id",
-                "Display",
-                booking.TourId
-            );
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+        // GET: Bookings/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null) return NotFound();
+
+            PopulateLists(booking.ClientId, booking.TourId);
+
+            HttpContext.Session.SetString("EditBooking",
+                JsonSerializer.Serialize(booking));
+
             return View(booking);
         }
 
+        // POST: Bookings/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, [Bind("Id,ClientId,TourId,Status,NumberOfPeople")] Booking booking)
+        {
+            if (id != booking.Id) return NotFound();
+
+            if (!ModelState.IsValid)
+                return View(booking);
+
+            HttpContext.Session.SetString("EditBooking",
+                JsonSerializer.Serialize(booking));
+
+            ViewBag.Mode = "Edit";
+
+            PopulateLists(booking.ClientId, booking.TourId);
+            return View("Confirm", booking);
+
+        }
+
+        
         // GET: Bookings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -279,6 +220,18 @@ namespace WebProjectServ.Controllers
         private bool BookingExists(int id)
         {
             return _context.Bookings.Any(e => e.Id == id);
+        }
+
+
+        private void PopulateLists(object selectedClient = null, object selectedTour = null)
+        {
+            ViewData["ClientId"] = new SelectList(_context.Clients
+                .Select(c => new { c.Id, Display = c.Id + " - " + c.FullName }),
+                "Id", "Display", selectedClient);
+
+            ViewData["TourId"] = new SelectList(_context.Tours
+                .Select(t => new { t.Id, Display = t.Id + " - " + t.Name }),
+                "Id", "Display", selectedTour);
         }
     }
 }

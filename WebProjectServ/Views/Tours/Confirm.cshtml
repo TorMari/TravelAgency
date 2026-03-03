@@ -1,0 +1,61 @@
+﻿@model WebProjectServ.Models.Tour
+
+@{
+    ViewData["Title"] = "Tours";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow border-warning">
+
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">
+                Adding new information
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-warning">
+                Are you sure you want to save this tour?
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Country</dt>
+                <dd class="col-sm-9">@Model.Country</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3">Number of Days</dt>
+                <dd class="col-sm-9">@Model.DurationDays</dd>
+
+                <dt class="col-sm-3">Start Date</dt>
+                <dd class="col-sm-9">@Model.StartDate</dd>
+
+                <dt class="col-sm-3">Price, €</dt>
+                <dd class="col-sm-9">@Model.Price</dd>
+
+            </dl>
+
+        </div>
+
+        <div class="card-footer text-end">
+            <a asp-action="CancelCreate" class="btn btn-secondary">
+                Cancel
+            </a>
+            <form asp-action="Confirm" class="d-inline" method="post">
+                <input type="hidden" name="mode" value="@ViewBag.Mode" />
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+

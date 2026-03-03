@@ -17,21 +17,21 @@
                 <div class="card-body">
                     <form asp-action="Create">
 
-                        <input type="hidden" name="fromClient" value="@ViewBag.FromClient" />
-                        <input type="hidden" name="fromTour" value="@ViewBag.FromTour" />
+                        <input asp-for="ClientId" type="hidden" name="fromClient" value="@ViewBag.FromClient" />
+                        <input asp-for="TourId" type="hidden" name="fromTour" value="@ViewBag.FromTour" />
 
                         @if (ViewBag.Order == "clientFirst")
                         {
                             <div class="mb-3">
-                                <label class="form-label">Client</label>
-                                <input class="form-control"
+                                <label asp-for="ClientId" class="form-label">Client</label>
+                                <input asp-for="ClientId" class="form-control"
                                        value="@ViewBag.FromClient"
                                        disabled />
                                 <input type="hidden" asp-for="ClientId" value="@ViewBag.FromClient" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Tour</label>
+                                <label asp-for="TourId" class="form-label">Tour</label>
                                 <select asp-for="TourId"
                                         class="form-select"
                                         asp-items="ViewBag.TourId">
@@ -41,15 +41,15 @@
                         else if (ViewBag.Order == "tourFirst")
                         {
                             <div class="mb-3">
-                                <label class="form-label">Tour</label>
-                                <input class="form-control"
+                                <label asp-for="TourId" class="form-label">Tour</label>
+                                <input asp-for="TourId" class="form-control"
                                        value="@ViewBag.FromTour"
                                        disabled />
                                 <input type="hidden" asp-for="TourId" value="@ViewBag.FromTour" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Client</label>
+                                <label asp-for="ClientId" class="form-label">Client</label>
                                 <select asp-for="ClientId"
                                         class="form-select"
                                         asp-items="ViewBag.ClientId">
@@ -59,7 +59,7 @@
                         else
                         {
                             <div class="mb-3">
-                                <label class="form-label">Client</label>
+                                <label asp-for="ClientId" class="form-label">Client</label>
                                 <select asp-for="ClientId"
                                         class="form-select"
                                         asp-items="ViewBag.ClientId">
@@ -67,7 +67,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Tour</label>
+                                <label asp-for="TourId" class="form-label">Tour</label>
                                 <select asp-for="TourId"
                                         class="form-select"
                                         asp-items="ViewBag.TourId">
@@ -132,3 +132,7 @@
         </div>
     </div>
 </div>
+
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

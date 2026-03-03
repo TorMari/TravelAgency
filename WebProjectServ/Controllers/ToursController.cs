@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using WebProjectServ.Models;
 
 namespace WebProjectServ.Controllers
@@ -38,21 +39,29 @@ namespace WebProjectServ.Controllers
         // GET: ToursController/Create
         public IActionResult Create()
         {
+            var sessionData = HttpContext.Session.GetString("CreateTour");
+
+            if (sessionData != null)
+            {
+                var tour = JsonSerializer.Deserialize<Tour>(sessionData);
+                return View(tour);
+            }
             return View();
         }
 
         // POST: ToursController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Country,Price,DurationDays,StartDate,Description")] Tour tour)
+        public IActionResult Create([Bind("Id,Name,Country,Price,DurationDays,StartDate,Description")] Tour tour)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(tour);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(tour);
+            if (!ModelState.IsValid)
+                return View(tour);
+
+            HttpContext.Session.SetString("CreateTour",
+                JsonSerializer.Serialize(tour));
+
+            ViewBag.Mode = "Create";
+            return View("Confirm", tour);
         }
 
         // GET: ToursController/Edit/5
@@ -63,37 +72,72 @@ namespace WebProjectServ.Controllers
             var tour = await _context.Tours.FindAsync(id);
             if (tour == null) return NotFound();
 
+            HttpContext.Session.SetString("EditTour",
+                JsonSerializer.Serialize(tour));
+
             return View(tour);
         }
 
         // POST: ToursController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Country,Price,DurationDays,StartDate,Description")] Tour tour)
+        public IActionResult Edit(int id, [Bind("Id,Name,Country,Price,DurationDays,StartDate,Description")] Tour tour)
         {
             if (id != tour.Id) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(tour);
+
+            HttpContext.Session.SetString("EditTour",
+                JsonSerializer.Serialize(tour));
+
+            ViewBag.Mode = "Edit";
+            return View("Confirm", tour);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Confirm(string mode)
+        {
+            string modename = mode + "Tour";
+            var data = HttpContext.Session.GetString(modename);
+            if (data == null) return RedirectToAction(nameof(Index));
+            var tour = JsonSerializer.Deserialize<Tour>(data);
+
+            if (mode == "Create")
             {
-                try
-                {
-                    _context.Update(tour);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(tour.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Add(tour);
+                await _context.SaveChangesAsync();
             }
-            return View(tour);
+            else if (mode == "Edit")
+            {
+                var model = await _context.Tours.FindAsync(tour.Id);
+                if (model == null) return NotFound();
+
+                model.Name = tour.Name;
+                model.Country = tour.Country;
+                model.Price = tour.Price;
+                model.DurationDays = tour.DurationDays;
+                model.StartDate = tour.StartDate;
+                model.Description = tour.Description;
+                var bookings = _context.Bookings
+                    .Where(b => b.TourId == tour.Id);
+
+                foreach (var booking in bookings)
+                {
+                    booking.TotalPrice = booking.NumberOfPeople * tour.Price;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            HttpContext.Session.Remove(modename);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult CancelCreate()
+        {
+            HttpContext.Session.Remove("CreateTour");
+            return RedirectToAction(nameof(Create));
         }
 
         // GET: ToursController/Delete/5
@@ -128,7 +172,7 @@ namespace WebProjectServ.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        private bool ClientExists(int id)
+        private bool TourExists(int id)
         {
             return _context.Tours.Any(e => e.Id == id);
         }
