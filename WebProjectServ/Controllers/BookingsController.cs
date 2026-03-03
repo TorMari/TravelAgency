@@ -222,7 +222,6 @@ namespace WebProjectServ.Controllers
             return _context.Bookings.Any(e => e.Id == id);
         }
 
-
         private void PopulateLists(object selectedClient = null, object selectedTour = null)
         {
             ViewData["ClientId"] = new SelectList(_context.Clients

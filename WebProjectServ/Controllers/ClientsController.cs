@@ -95,25 +95,6 @@ namespace WebProjectServ.Controllers
         }
 
 
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateConfirmed()
-        //{
-        //    var sessionData = HttpContext.Session.GetString("CreateClient");
-        //    if (sessionData == null)
-        //        return RedirectToAction(nameof(Index));
-
-        //    var client = JsonSerializer.Deserialize<Client>(sessionData);
-
-        //    _context.Add(client);
-        //    await _context.SaveChangesAsync();
-
-        //    HttpContext.Session.Remove("CreateClient");
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
         // GET: ClientsController/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -134,27 +115,6 @@ namespace WebProjectServ.Controllers
         public IActionResult Edit(int id, [Bind("Id,FirstName,LastName,Email,Phone,DateOfBirth")] Client client)
         {
             if (id != client.Id) return NotFound();
-
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Update(client);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!ClientExists(client.Id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
 
             if (!ModelState.IsValid)
                 return View(client);
