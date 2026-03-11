@@ -1,0 +1,41 @@
+﻿@page
+@model WebProjectServ.Areas.Identity.Pages.Account.DeleteAccountModel
+
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card modern-card">
+                <div class="card-header modern-card-header">
+                    <h4 class="mb-0">Delete Account</h4>
+                </div>
+
+                <div class="card-body text-center">
+
+                    <div class="modern-danger">
+						Are you sure you want to <strong>delete</strong> you account? This action cannot be undone!
+                    </div>
+
+                    <form method="post">
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-controller="Home" asp-action="Index"
+                               class="btn btn-outline-secondary modern-action-btn ms-2">
+                                Cancel
+                            </a>
+
+                            <button type="submit" class="btn btn-danger modern-delete-btn">
+                                Delete
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

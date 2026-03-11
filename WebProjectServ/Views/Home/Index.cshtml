@@ -6,7 +6,7 @@
 <div class="text-center">
     <h1 class="display-4">Welcome to Travel Agency System</h1>
     <p class="lead">
-        This web application allows you to manage clients, tours and bookings.
+        This web application allows you to manage tours and bookings in one place.
     </p>
 
     <hr />
@@ -18,23 +18,35 @@
             </div>
 
             <div class="col-md-6 text-center">
+				@if (!User.Identity.IsAuthenticated)
+				{
+                    <p>
+					    To get started, <strong>log in to your account</strong> or <strong>create a new one.</strong>
 
-                <p>
-                    <strong>Main features:</strong>
-                </p>
+                        After signing in you can:
+                    </p>
 
-                <ul class="list-unstyled text-start">
-                    <li>• View and manage clients</li>
-                    <li>• Create and edit travel tours</li>
-                    <li>• Make and manage bookings</li>
-                    <li>• Store information in a database</li>
-                </ul>
+                    <ul class="list-unstyled text-start">
+                        <li>• Browse available tours</li>
+                        <li>• Create and manage bookings</li>
+                    </ul>
 
-                <br />
+                    <br />
 
-                <p>
-                    Use the navigation menu above to start working with the system.
-                </p>
+                    <p>
+                        Use the Login or Register buttons above to continue.
+                    </p>
+
+                    <a asp-page="/Account/Login" asp-area="Identity" class="btn btn-lg btn-info modern-details-btn">Login</a>
+                    <a asp-page="/Account/Register" asp-area="Identity" class="btn btn-lg btn-primary modern-btn">Register</a>
+
+                }
+                else
+                {
+                    <h3>
+                        Hello, @User.Identity.Name
+                    </h3>
+                }
 
             </div>
 

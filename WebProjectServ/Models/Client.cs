@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebProjectServ.Models
 {
@@ -42,5 +43,9 @@ namespace WebProjectServ.Models
 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public string FullName => $"{FirstName} {LastName}";
+
+        [ValidateNever]
+        public ApplicationUser User { get; set; }
+
     }
 }

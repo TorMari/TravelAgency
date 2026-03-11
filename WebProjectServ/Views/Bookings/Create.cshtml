@@ -9,8 +9,8 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
+            <div class="card modern-card">
+                <div class="card-header modern-card-header">
                     <h4 class="mb-0">Create New Booking</h4>
                 </div>
                 
@@ -24,7 +24,7 @@
                         {
                             <div class="mb-3">
                                 <label asp-for="ClientId" class="form-label">Client</label>
-                                <input asp-for="ClientId" class="form-control"
+                                <input asp-for="ClientId" class="form-control modern-input"
                                        value="@ViewBag.FromClient"
                                        disabled />
                                 <input type="hidden" asp-for="ClientId" value="@ViewBag.FromClient" />
@@ -33,16 +33,17 @@
                             <div class="mb-3">
                                 <label asp-for="TourId" class="form-label">Tour</label>
                                 <select asp-for="TourId"
-                                        class="form-select"
+                                        class="form-select modern-selection"
                                         asp-items="ViewBag.TourId">
                                 </select>
                             </div>
                         }
                         else if (ViewBag.Order == "tourFirst")
                         {
+
                             <div class="mb-3">
                                 <label asp-for="TourId" class="form-label">Tour</label>
-                                <input asp-for="TourId" class="form-control"
+                                <input asp-for="TourId" class="form-control modern-input"
                                        value="@ViewBag.FromTour"
                                        disabled />
                                 <input type="hidden" asp-for="TourId" value="@ViewBag.FromTour" />
@@ -50,10 +51,11 @@
 
                             <div class="mb-3">
                                 <label asp-for="ClientId" class="form-label">Client</label>
-                                <select asp-for="ClientId"
-                                        class="form-select"
-                                        asp-items="ViewBag.ClientId">
-                                </select>
+                                <input asp-for="ClientId" class="form-control modern-input"
+                                       value="@User.FindFirst("ClientId")?.Value"
+                                       disabled />
+                                <input type="hidden" asp-for="ClientId"
+                                       value="@User.FindFirst("ClientId")?.Value" />
                             </div>
                         }
                         else
@@ -61,7 +63,7 @@
                             <div class="mb-3">
                                 <label asp-for="ClientId" class="form-label">Client</label>
                                 <select asp-for="ClientId"
-                                        class="form-select"
+                                        class="form-select modern-selection"
                                         asp-items="ViewBag.ClientId">
                                 </select>
                             </div>
@@ -69,7 +71,7 @@
                             <div class="mb-3">
                                 <label asp-for="TourId" class="form-label">Tour</label>
                                 <select asp-for="TourId"
-                                        class="form-select"
+                                        class="form-select modern-selection"
                                         asp-items="ViewBag.TourId">
                                 </select>
                             </div>
@@ -77,18 +79,31 @@
 
                         <div class="mb-3">
                             <label asp-for="NumberOfPeople" class="form-label">Number of People</label>
-                            <input asp-for="NumberOfPeople" class="form-control" placeholder="Enter number of people"/>
+                            <input asp-for="NumberOfPeople" class="form-control modern-input" placeholder="Enter number of people" />
                             <span asp-validation-for="NumberOfPeople" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Status" class="form-label"></label>
-                            <select asp-for="Status" class="form-select">
-                                <option value="" disabled selected>Choose status option</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
+                            @if (User.IsInRole("admin"))
+                            {
+                                <label asp-for="Status" class="form-label"></label>
+                                <select asp-for="Status" class="form-select modern-selection">
+                                    <option value="" disabled selected>Choose status option</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <label asp-for="Status" class="form-label">Status (The booking status will change after a confirmation call)</label>
+                                <input asp-for="Status"
+                                       class="form-control modern-input"
+                                       value="Pending"
+                                       disabled /> 
+
+                                <input type="hidden" asp-for="Status" value="Pending" />
+                            }
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -98,7 +113,7 @@
                                     <a asp-controller="Clients"
                                        asp-action="Details"
                                        asp-route-id="@ViewBag.FromClient"
-                                       class="btn btn-secondary">
+                                       class="btn btn-outline-secondary modern-action-btn">
                                         ← Back to Client
                                     </a>
                                 }
@@ -107,20 +122,20 @@
                                     <a asp-controller="Tours"
                                        asp-action="Details"
                                        asp-route-id="@ViewBag.FromTour"
-                                       class="btn btn-secondary">
+                                       class="btn btn-outline-secondary modern-action-btn">
                                         ← Back to Tour
                                     </a>
                                 }
                                 else
                                 {
-                                    <a asp-action="Index" class="btn btn-secondary">
+                                    <a asp-action="Index" class="btn btn-outline-secondary modern-action-btn">
                                         ← Back to list
                                     </a>
                                 }
                             </div>
 
                             <div>
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-primary modern-btn">
                                     Save Booking
                                 </button>
                             </div>

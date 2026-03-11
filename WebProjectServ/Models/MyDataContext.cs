@@ -1,13 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebProjectServ.Models
 {
-    public class MyDataContext: DbContext
+    public class MyDataContext : IdentityDbContext<ApplicationUser> 
     {
+
         public MyDataContext(DbContextOptions<MyDataContext> options) 
             : base(options) 
         { 
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Tour> Tours { get; set; }
@@ -15,6 +18,8 @@ namespace WebProjectServ.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Booking>()
                 .HasOne(l => l.Client)
                 .WithMany(r => r.Bookings)

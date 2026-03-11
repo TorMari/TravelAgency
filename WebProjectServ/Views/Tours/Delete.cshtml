@@ -6,9 +6,9 @@
 
 <div class="container mt-4">
 
-    <div class="card shadow border-danger">
+    <div class="card modern-card">
 
-        <div class="card-header bg-secondary text-white">
+        <div class="card-header modern-card-header">
             <h4 class="mb-0">
                 Delete Tour №@Model.Id
             </h4>
@@ -16,7 +16,7 @@
 
         <div class="card-body">
 
-            <div class="alert alert-warning">
+            <div class="alert modern-danger">
                 Are you sure you want to delete this tour and all associated bookings?
                 This action cannot be undone.
             </div>
@@ -48,15 +48,15 @@
 
         </div>
 
-        <div class="card-footer text-end">
+        <div class="card-footer modern-footer-actions">
 
-            <a asp-action="Index" class="btn btn-secondary">
+            <a asp-action="Index" class="btn btn-outline-secondary modern-action-btn">
                 Cancel
             </a>
 
             <form asp-action="Delete" class="d-inline">
                 <input type="hidden" asp-for="Id" />
-                <button type="submit" class="btn btn-danger">
+                <button type="submit" class="btn btn-danger modern-delete-btn">
                     Delete
                 </button>
             </form>

@@ -7,8 +7,8 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
+            <div class="card modern-card">
+                <div class="card-header modern-card-header">
                     <h4 class="mb-0">Edit Client Information</h4>
                 </div>
 
@@ -18,41 +18,53 @@
 
                         <div class="mb-3">
                             <label asp-for="LastName">Last Name</label>
-                            <input asp-for="LastName" class="form-control" />
+                            <input asp-for="LastName" class="form-control modern-input" />
                             <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="FirstName">First Name</label>
-                            <input asp-for="FirstName" class="form-control" />
+                            <input asp-for="FirstName" class="form-control modern-input" />
                             <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Email"></label>
-                            <input asp-for="Email" class="form-control" />
+                            <input asp-for="Email" class="form-control modern-input" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Phone">Phone number</label>
-                            <input asp-for="Phone" class="form-control" />
+                            <input asp-for="Phone" class="form-control modern-input" />
                             <span asp-validation-for="Phone" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="DateOfBirth">Date of Birth</label>
-                            <input asp-for="DateOfBirth" class="form-control" type="date"/>
+                            <input asp-for="DateOfBirth" class="form-control modern-input" type="date" />
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">
-							<a asp-action="Index" class="btn btn-secondary">
-                                ← Back to list
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                Save Client
-                            </button>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                            {
+                                <a asp-action="Index" class="btn btn-outline-secondary modern-action-btn">
+                                    ← Back to list
+                                </a>
+                                <button type="submit" class="btn btn-primary modern-btn">
+                                    Save Client
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Clients" asp-action="Details" asp-route-id="@User.FindFirst("ClientId")?.Value" asp-action="Index" class="btn btn-outline-secondary modern-action-btn">
+                                    ← Back to Profile
+                                </a>
+                                <button type="submit" class="btn btn-primary modern-btn">
+                                    Save Changes
+                                </button>
+                            } 
                         </div>
                     </form>
                 </div>

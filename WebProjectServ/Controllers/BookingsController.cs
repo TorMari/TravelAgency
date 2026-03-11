@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Text.Json;
 using WebProjectServ.Models;
 
@@ -88,7 +91,7 @@ namespace WebProjectServ.Controllers
 
         }
 
-
+        [Authorize]
         public async Task<IActionResult> Confirm(string mode, int? fromClient, int? fromTour)
         {
             string modename = mode + "Booking";
@@ -141,12 +144,21 @@ namespace WebProjectServ.Controllers
             }
 
             HttpContext.Session.Remove(modename);
-            if (fromClient != null)
-                return RedirectToAction("Details", "Clients", new { id = fromClient });
-            if (fromTour != null)
-                return RedirectToAction("Details", "Tours", new { id = fromTour });
 
-            return RedirectToAction(nameof(Index));
+            if (User.IsInRole("admin"))
+            {
+                if (fromClient != null)
+                    return RedirectToAction("Details", "Clients", new { id = fromClient });
+
+                if (fromTour != null)
+                    return RedirectToAction("Details", "Tours", new { id = fromTour });
+
+                return RedirectToAction(nameof(Index)); 
+            }
+            else
+            {
+                return RedirectToAction("Details", "Clients", new { id = User.FindFirst("ClientId")?.Value});
+            }
         }
 
 

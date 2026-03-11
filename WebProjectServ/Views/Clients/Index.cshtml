@@ -7,15 +7,15 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Clients</h2>
-        <a asp-action="Create" class="btn btn-success">
+        @* <a asp-action="Create" class="btn btn-primary modern-btn">
             + Add New Client
-        </a>
+        </a> *@
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card modern-card">
         <div class="card-body">
 
-            <table class="table table-hover table-striped align-middle">
+            <table class="table table-hover modern-table align-middle">
                 <thead class="table-light">
                     <tr>
                         <th>Id</th>
@@ -30,7 +30,7 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td><span class="badge bg-secondary">@item.Id</span></td>
+                            <td><span class="badge modern-badge">@item.Id</span></td>
                             <td>@item.LastName</td>
                             <td>@item.FirstName</td>
                             <td>@item.Email</td>
@@ -38,19 +38,19 @@
                             <td class="text-center">
 
                                 <a asp-action="Details" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-info">
+                                   class="btn btn-sm btn-info modern-details-btn">
                                     Details
                                 </a>
 
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-warning">
+                                @* <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-warning modern-edit-btn">
                                     Edit
-                                </a>
+                                </a> 
 
                                 <a asp-action="Delete" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-danger">
+                                   class="btn btn-sm btn-danger modern-delete-btn">
                                     Delete
-                                </a>
+                                </a> *@
 
                             </td>
                         </tr>
@@ -60,7 +60,7 @@
 
             @if (!Model.Any())
             {
-                <div class="text-center text-muted mt-3">
+                <div class="empty-state">
                     No clients found.
                 </div>
             }

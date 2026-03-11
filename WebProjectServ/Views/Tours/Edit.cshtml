@@ -5,8 +5,8 @@
 }
 
 <div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-secondary text-white">
+    <div class="card modern-card">
+        <div class="card-header modern-card-header">
 	        <h4 class="mb-0">Edit Tour Information</h4>
         </div>
         <div class="card-body">
@@ -15,40 +15,40 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" />
+                        <input asp-for="Name" class="form-control modern-input" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="Country" class="form-label"></label>
-                        <input asp-for="Country" class="form-control" />
+                        <input asp-for="Country" class="form-control modern-input" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label asp-for="Price" class="form-label">Price, €</label>
-                        <input asp-for="Price" class="form-control" />
+                        <input asp-for="Price" class="form-control modern-input" />
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label asp-for="DurationDays" class="form-label">Duration Days</label>
-                        <input asp-for="DurationDays" class="form-control" />
+                        <input asp-for="DurationDays" class="form-control modern-input" />
                     </div>
 
                     <div class="col-md-4 mb-3">
                         <label asp-for="StartDate" class="form-label">Start Date</label>
-                        <input asp-for="StartDate" type="datetime-local" class="form-control" />
+                        <input asp-for="StartDate" type="datetime-local" class="form-control modern-input" />
                     </div>
                 </div>
             
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <textarea asp-for="Description" class="form-control modern-input"></textarea>
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">← Back to list</a>
-                    <button type="submit" class="btn btn-success">Save Tour</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary modern-action-btn">← Back to list</a>
+                    <button type="submit" class="btn btn-primary modern-btn">Save Tour</button>
                 </div>
             
             </form>

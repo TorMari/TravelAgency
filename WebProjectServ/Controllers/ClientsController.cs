@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 using WebProjectServ.Models;
 
@@ -91,7 +93,14 @@ namespace WebProjectServ.Controllers
                 await _context.SaveChangesAsync();
             }
             HttpContext.Session.Remove(modename);
-            return RedirectToAction(nameof(Index));
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return RedirectToAction("Details", "Clients", new { id = User.FindFirst("ClientId")?.Value });
+            }
         }
 
 
@@ -170,5 +179,7 @@ namespace WebProjectServ.Controllers
         {
             return _context.Clients.Any(e => e.Id == id);
         }
+
+
     }
 }

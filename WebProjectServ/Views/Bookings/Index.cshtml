@@ -7,118 +7,116 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Bookings</h2>
-        <a asp-action="Create" class="btn btn-success">
+        <a asp-action="Create" class="btn btn-primary modern-btn">
             + Add New Booking
         </a>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card modern-card">
         <div class="card-body">
 
-            @if (Model.Any())
-            {
-                <table class="table table-hover table-striped align-middle">
-                    <thead class="table-light">
+            <table class="table table-hover modern-table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Id</th>
+                        <th>Client</th>
+                        <th>Tour</th>
+                        <th>Date</th>
+                        <th>Number of People</th>
+                        <th>Status</th>
+                        <th>Total Price, €</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
                         <tr>
-                            <th>Id</th>
-                            <th>Client</th>
-                            <th>Tour</th>
-                            <th>Date</th>
-                            <th>Number of People</th>
-                            <th>Status</th>
-                            <th>Total Price, €</th>
-                            <th class="text-center">Actions</th>
+                            <td><span class="badge modern-badge">@item.Id</span></td>
+
+                            <td>
+                                @if (item.Client != null)
+                                {
+                                    <div class="fw-semibold">
+                                        @item.Client.FirstName @item.Client.LastName
+                                    </div>
+                                    <small class="text-muted">ID: @item.ClientId</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Client №@item.ClientId</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (item.Tour != null)
+                                {
+                                    <div class="fw-semibold">@item.Tour.Name</div>
+                                    <small class="text-muted">ID: @item.TourId</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Tour №@item.TourId</span>
+                                }
+                            </td>
+
+                            <td>@item.BookingDate.ToString("dd.MM.yyyy")</td>
+
+                            <td>
+                                <span>
+                                    @item.NumberOfPeople
+                                </span>
+                            </td>
+
+                            <td>
+                                @{
+                                    var statusClass = item.Status switch
+                                    {
+                                        "Confirmed" => "status-confirmed",
+                                        "Pending" => "status-pending",
+                                        "Cancelled" => "status-cancelled",
+                                        _ => "status-default"
+                                    };
+                                }
+
+                                <span class="status-badge @statusClass">
+                                    @item.Status
+                                </span>
+                            </td>
+
+                            <td>
+                                <span>
+                                    @item.TotalPrice
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-info modern-details-btn">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-warning modern-edit-btn">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="btn btn-sm btn-danger modern-delete-btn">
+                                    Delete
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td><span class="badge bg-secondary">@item.Id</span></td>
-                                
-                                <td>
-                                    @if (item.Client != null)
-                                    {
-                                        <div class="fw-semibold">
-                                            @item.Client.FirstName @item.Client.LastName
-                                        </div>
-                                        <small class="text-muted">ID: @item.ClientId</small>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Client №@item.ClientId</span>
-                                    }
-                                </td>
+                    }
+                </tbody>
+            </table>
 
-                                <td>
-                                    @if (item.Tour != null)
-                                    {
-                                        <div class="fw-semibold">@item.Tour.Name</div>
-                                        <small class="text-muted">ID: @item.TourId</small>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Tour №@item.TourId</span>
-                                    }
-                                </td>
-
-                                <td>@item.BookingDate.ToString("dd.MM.yyyy")</td>
-                              
-                                <td>
-                                    <span>
-                                        @item.NumberOfPeople
-                                    </span>
-                                </td>
-
-                                <td>
-                                    @{
-                                        var statusClass = item.Status switch
-                                        {
-                                            "Confirmed" => "bg-success",
-                                            "Pending" => "bg-warning text-dark",
-                                            "Cancelled" => "bg-danger",
-                                            _ => "bg-secondary"
-                                        };
-                                    }
-                                    <span class="badge @statusClass">
-                                        @item.Status
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span>
-                                        @item.TotalPrice
-                                    </span>
-                                </td>
-
-                                <td class="text-center">
-                                    <a asp-action="Details" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-info">
-                                        Details
-                                    </a>
-
-                                    <a asp-action="Edit" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-warning">
-                                        Edit
-                                    </a>
-
-                                    <a asp-action="Delete" asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-danger">
-                                        Delete
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
+            @if (!Model.Any())
             {
-                <div class="text-center text-muted mt-3">
+                <div class="empty-state">
                     No bookings found.
                 </div>
             }
-
         </div>
     </div>
 
