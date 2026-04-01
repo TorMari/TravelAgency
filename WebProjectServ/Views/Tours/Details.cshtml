@@ -79,6 +79,67 @@
 
         </div>
 
+        
+        
+
+        <div class="chat-wrapper-public">
+            <div class="chat-container">
+
+                <div id="chatroom" class="chat-messages">
+                    @foreach (var msg in ViewBag.Msg)
+                    {
+                        <div class="message-item">
+                            <p>
+                                <strong>@(msg.SenderName):</strong> @msg.Text
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(msg.FileUrl))
+                            {
+                                string fileName = msg.FileName ?? "";
+                                var extension = System.IO.Path.GetExtension(fileName).ToLower();
+                                string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+
+                                if (Enumerable.Contains(imageExtensions, extension))
+                                {
+                                    <img src="@msg.FileUrl" />
+                                }
+                                else
+                                {
+                                    <a href="@msg.FileUrl" target="_blank" class="file-link">
+                                        📎 @(msg.FileName ?? "Download file")
+                                    </a>
+                                }
+                            }
+
+                            <small>
+                                @msg.SentAt.ToLocalTime().ToString("dd.MM.yyyy, HH:mm")
+                            </small>
+                        </div>
+                    }
+                </div>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="chat-input">
+                        <input id="message" placeholder="Print message..." class="form-control modern-input" />
+                        
+                        <label for="fileInput" class="btn btn-info modern-details-btn">
+                            📎 Add file
+                        </label>
+
+                        <input type="file" id="fileInput" hidden />
+
+                        <span id="fileName">No file selected</span>
+
+                        <input id="sendBtn" type="button" value="Send" disabled class="btn btn-primary" />
+                    </div>
+                }
+
+                
+
+            </div>
+        </div>
+
         <div class="card-footer modern-footer-actions">
             <a asp-action="Index" class="btn btn-outline-secondary modern-action-btn">
                 ← Back to list
@@ -115,3 +176,117 @@
     </div>
 
 </div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    const tourId = @Model.Id;
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .build();
+
+    hubConnection.start().then(function () {
+        hubConnection.invoke("JoinTour", tourId);
+        document.getElementById("sendBtn").disabled = false;
+    });
+
+
+    document.getElementById("sendBtn").addEventListener("click", async function () {
+
+        let messageInput = document.getElementById("message");
+        let fileInput = document.getElementById("fileInput");
+        let message = messageInput.value;
+
+        let fileData = null;
+        if (fileInput.files.length > 0) {
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            let response = await fetch("/Chat/UploadFile", {
+                method: "POST",
+                body: formData
+            });
+
+            fileData = await response.json();
+        }
+
+        hubConnection.invoke("SendToTour", tourId, message, fileData)
+            .then(function () {
+                messageInput.value = "";
+                fileInput.value = "";
+            })
+            .catch(function (err) {
+                console.error(err.toString());
+            });
+    });
+
+
+    hubConnection.on("ReceiveTour", function (senderName, message, fileName, fileUrl, sendAt) {
+        let dateObj = new Date(sendAt);
+        let date = dateObj.toLocaleString("uk-UA", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        let chatroom = document.getElementById("chatroom");
+
+        let messageDiv = document.createElement("div");
+        messageDiv.className = "message-item";
+
+        let messageElement = document.createElement("p");
+
+        let msgStrongElement = document.createElement("strong");
+        msgStrongElement.textContent = (senderName) + ": ";
+
+        messageElement.appendChild(msgStrongElement);
+        messageElement.appendChild(document.createTextNode(message));
+        messageDiv.appendChild(messageElement);
+
+        if (fileUrl) {
+            let extension = fileName ? fileName.split('.').pop().toLowerCase() : "";
+            let imageExtensions = ["jpg", "jpeg", "png", "gif"];
+
+            if (imageExtensions.includes(extension)) {
+                let img = document.createElement("img");
+                img.src = fileUrl;
+                messageDiv.appendChild(img);
+            } else {
+                
+                let fileLink = document.createElement("a");
+                fileLink.href = fileUrl;
+                fileLink.target = "_blank";
+                fileLink.textContent = "📎 " + (fileName || "Add file");
+                messageDiv.appendChild(fileLink);
+            }
+        }
+
+        let timeElement = document.createElement("small");
+        timeElement.textContent = date;
+        timeElement.style.color = "gray";
+        timeElement.style.fontSize = "0.75em";
+
+        messageDiv.appendChild(timeElement);
+
+        chatroom.appendChild(messageDiv);
+        scrollToBottom();
+    });
+
+    document.getElementById("fileInput").addEventListener("change", function () {
+        let fileName = this.files.length > 0 ? this.files[0].name : "No file selected";
+        document.getElementById("fileName").textContent = fileName;
+    });
+
+    function scrollToBottom() {
+        let chat = document.getElementById("chatroom");
+        chat.scrollTop = chat.scrollHeight;
+    }
+</script>
+
+

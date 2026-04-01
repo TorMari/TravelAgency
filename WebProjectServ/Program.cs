@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+//using WebProjectServ.Data;
 using WebProjectServ.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace WebProjectServ
 {
@@ -9,6 +11,7 @@ namespace WebProjectServ
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<MyDataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -22,8 +25,14 @@ namespace WebProjectServ
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDistributedMemoryCache();
-            builder.Services.AddSession();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(40);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             builder.Services.AddRazorPages();
+            
 
             var app = builder.Build();
 
@@ -38,6 +47,7 @@ namespace WebProjectServ
             }
 
             app.UseSession();
+            
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -50,17 +60,19 @@ namespace WebProjectServ
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.MapHub<ChatHub>("/chat");
+
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            
             app.Run();
         }
     }

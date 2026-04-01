@@ -33,6 +33,13 @@ namespace WebProjectServ.Controllers
 
             if (tour == null) return NotFound();
 
+            var messages = await _context.Messages
+               .Where(m => m.TourId == id)
+               .OrderBy(m => m.SentAt)
+               .ThenBy(m => m.Id)
+               .ToListAsync();
+            ViewBag.Msg = messages;
+
             return View(tour);
         }
 

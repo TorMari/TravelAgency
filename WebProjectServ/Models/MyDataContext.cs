@@ -16,6 +16,8 @@ namespace WebProjectServ.Models
         public DbSet<Tour> Tours { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,6 +36,11 @@ namespace WebProjectServ.Models
                 .HasIndex(b => new { b.ClientId, b.TourId })
                 .IsUnique();
 
+            modelBuilder.Entity<Message>()
+            .HasIndex(m => m.TourId);           
+
+            modelBuilder.Entity<Message>()
+                .HasIndex(m => new { m.SenderId, m.ReceiverId }); 
         }
     }
 }

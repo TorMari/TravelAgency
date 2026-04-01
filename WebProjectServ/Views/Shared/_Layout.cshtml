@@ -46,7 +46,13 @@
                             </li>
                         }
 
-                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark @(ViewContext.RouteData.Values["controller"]?.ToString() == "Chat" ? "active" : "")"
+                                   asp-controller="Chat" asp-action="Private">Chat</a>
+                            </li>
+                        }
                                               
                      
                     </ul>
@@ -85,6 +91,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
