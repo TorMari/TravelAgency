@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-//using WebProjectServ.Data;
 using WebProjectServ.Models;
 using Microsoft.AspNetCore.SignalR;
 
@@ -13,8 +12,10 @@ namespace WebProjectServ
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddSignalR();
 
+            builder.Services.AddControllers();
             builder.Services.AddDbContext<MyDataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<MyDataContext>()
@@ -32,6 +33,9 @@ namespace WebProjectServ
                 options.Cookie.IsEssential = true;
             });
             builder.Services.AddRazorPages();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             
 
             var app = builder.Build();
@@ -66,6 +70,9 @@ namespace WebProjectServ
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.MapControllerRoute(
                 name: "default",

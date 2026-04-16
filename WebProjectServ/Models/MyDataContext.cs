@@ -10,7 +10,7 @@ namespace WebProjectServ.Models
         public MyDataContext(DbContextOptions<MyDataContext> options) 
             : base(options) 
         { 
-            //Database.EnsureCreated();
+            Database.EnsureCreated();
         }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Tour> Tours { get; set; }

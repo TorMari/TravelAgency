@@ -38,6 +38,6 @@ namespace WebProjectServ.Models
 
         [StringLength(1000)]
         public string Description { get; set; }
-        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public ICollection<Booking>? Bookings { get; set; } = new List<Booking>();
     }
 }

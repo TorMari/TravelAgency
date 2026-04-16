@@ -41,11 +41,11 @@ namespace WebProjectServ.Models
             }
         }
 
-        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public ICollection<Booking>? Bookings { get; set; } = new List<Booking>();
         public string FullName => $"{FirstName} {LastName}";
 
         [ValidateNever]
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
 
     }
 }

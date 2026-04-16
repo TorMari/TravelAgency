@@ -12,13 +12,13 @@ public class Booking
     public int ClientId { get; set; }
 
     [ValidateNever]
-    public Client Client { get; set; }
+    public Client? Client { get; set; }
 
     [Required(ErrorMessage = "Tour is required")]
     public int TourId { get; set; }
 
     [ValidateNever]
-    public Tour Tour { get; set; }
+    public Tour? Tour { get; set; }
 
     public DateTime BookingDate { get; set; }
 
